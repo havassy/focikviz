@@ -97,15 +97,7 @@ async function loadQuestions(topic) {
             return true;
         });
 
-        allQuestions = validData.map((row, index) => {
-            // DEBUG: Első 3 sor kiírása hogy lássuk az oszlopneveket
-            if (index < 3) {
-                console.log('Excel sor', index + 1, ':', row);
-                console.log('  - kerdés:', row['kerdés']);
-                console.log('  - kep:', row['kep']);
-                console.log('  - Összes kulcs:', Object.keys(row));
-            }
-            
+        allQuestions = validData.map(row => {
             return {
                 question: row['kerdés'] || row['kerdes'],
                 type: row['tipus'],
@@ -172,9 +164,7 @@ function showQuestion(question) {
     answersContainer.innerHTML = '';
 
     // Display image if present
-    console.log('Kép ellenőrzés:', question.image, 'Témakör:', currentTopic); // DEBUG
     if (question.image) {
-        console.log('Kép útvonal:', `kepek/${currentTopic}/${question.image}`); // DEBUG
         const imgContainer = document.createElement('div');
         imgContainer.className = 'question-image-container';
         
@@ -187,10 +177,6 @@ function showQuestion(question) {
         img.onerror = function() {
             imgContainer.style.display = 'none';
             console.warn(`Kép nem található: kepek/${currentTopic}/${question.image}`);
-        };
-        
-        img.onload = function() {
-            console.log('Kép sikeresen betöltve!'); // DEBUG
         };
         
         imgContainer.appendChild(img);
