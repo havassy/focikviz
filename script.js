@@ -97,15 +97,25 @@ async function loadQuestions(topic) {
             return true;
         });
 
-        allQuestions = validData.map(row => ({
-            question: row['kerdés'] || row['kerdes'],
-            type: row['tipus'],
-            correctAnswers: (row['helyes_valaszok'] || '').split(';').map(a => a.trim()).filter(a => a),
-            incorrectAnswers: (row['hibas_valaszok'] || '').split(';').map(a => a.trim()).filter(a => a),
-            points: parseInt(row['pontErtek']) || 0,
-            difficulty: row['nehezseg'] || row['nehezség'],
-            image: row['kep'] || null
-        }));
+        allQuestions = validData.map((row, index) => {
+            // DEBUG: Első 3 sor kiírása hogy lássuk az oszlopneveket
+            if (index < 3) {
+                console.log('Excel sor', index + 1, ':', row);
+                console.log('  - kerdés:', row['kerdés']);
+                console.log('  - kep:', row['kep']);
+                console.log('  - Összes kulcs:', Object.keys(row));
+            }
+            
+            return {
+                question: row['kerdés'] || row['kerdes'],
+                type: row['tipus'],
+                correctAnswers: (row['helyes_valaszok'] || '').split(';').map(a => a.trim()).filter(a => a),
+                incorrectAnswers: (row['hibas_valaszok'] || '').split(';').map(a => a.trim()).filter(a => a),
+                points: parseInt(row['pontErtek']) || 0,
+                difficulty: row['nehezseg'] || row['nehezség'],
+                image: row['kep'] || null
+            };
+        });
 
         resetQuiz();
         showScreen('difficultyScreen');
@@ -162,7 +172,9 @@ function showQuestion(question) {
     answersContainer.innerHTML = '';
 
     // Display image if present
+    console.log('Kép ellenőrzés:', question.image, 'Témakör:', currentTopic); // DEBUG
     if (question.image) {
+        console.log('Kép útvonal:', `kepek/${currentTopic}/${question.image}`); // DEBUG
         const imgContainer = document.createElement('div');
         imgContainer.className = 'question-image-container';
         
@@ -175,6 +187,10 @@ function showQuestion(question) {
         img.onerror = function() {
             imgContainer.style.display = 'none';
             console.warn(`Kép nem található: kepek/${currentTopic}/${question.image}`);
+        };
+        
+        img.onload = function() {
+            console.log('Kép sikeresen betöltve!'); // DEBUG
         };
         
         imgContainer.appendChild(img);
@@ -313,15 +329,24 @@ function showFeedback(isCorrect, points) {
     let levelInfo = '';
     if (earnedPoints < minPoints) {
         const remaining = minPoints - earnedPoints;
-        levelInfo = `<div class="feedback-points">Még ${remaining} pont kell a bronz szinthez!</div>`;
+        // Only show "points needed" if there are questions left
+        if (hasQuestionsLeft && selectedQuestions.length < 10) {
+            levelInfo = `<div class="feedback-points">Még ${remaining} pont kell a bronz szinthez!</div>`;
+        }
     } else if (earnedPoints >= minPoints && earnedPoints < silverPoints) {
         const remaining = silverPoints - earnedPoints;
         levelInfo = `<div class="feedback-points level-bronze">🥉 Bronz szint elérve!</div>`;
-        if (remaining > 0) levelInfo += `<div class="feedback-points">Még ${remaining} pont az ezüstig!</div>`;
+        // Only show "points to next level" if there are questions left
+        if (remaining > 0 && hasQuestionsLeft && selectedQuestions.length < 10) {
+            levelInfo += `<div class="feedback-points">Még ${remaining} pont az ezüstig!</div>`;
+        }
     } else if (earnedPoints >= silverPoints && earnedPoints < goldPoints) {
         const remaining = goldPoints - earnedPoints;
         levelInfo = `<div class="feedback-points level-silver">🥈 Ezüst szint elérve!</div>`;
-        if (remaining > 0) levelInfo += `<div class="feedback-points">Még ${remaining} pont az aranyig!</div>`;
+        // Only show "points to next level" if there are questions left
+        if (remaining > 0 && hasQuestionsLeft && selectedQuestions.length < 10) {
+            levelInfo += `<div class="feedback-points">Még ${remaining} pont az aranyig!</div>`;
+        }
     } else if (earnedPoints >= goldPoints) {
         levelInfo = `<div class="feedback-points level-gold">🥇 Arany szint elérve! Maximális teljesítmény!</div>`;
     }

@@ -20,18 +20,24 @@ Helyezd el az összes fájlt egy mappába:
   ├── kozetbolygo.xlsx
   ├── legkor.xlsx
   ├── vizburok.xlsx
-  └── geoszferak.xlsx
+  ├── geoszferak.xlsx
+  └── kepek/
+      ├── csillagaszat/
+      ├── kozetbolygo/
+      ├── legkor/
+      ├── vizburok/
+      └── geoszferak/
 ```
 
 ### 2. Excel fájlok készítése
 
 **FONTOS: Az Excel első sora a ponthatárokat tartalmazza!**
 
-| A | B | C | D | E | F |
-|---|---|---|---|---|---|
-| **Ponthatárok** | **30** | **40** | **50** | | |
-| **kerdés** | **tipus** | **helyes_valaszok** | **hibas_valaszok** | **pontErtek** | **nehezseg** |
-| Válaszd ki... | egyszeres | VI. 22. | III. 21.;... | 2 | könnyű |
+| A | B | C | D | E | F | G |
+|---|---|---|---|---|---|---|
+| **Ponthatárok** | **30** | **40** | **50** | | | |
+| **kerdés** | **tipus** | **helyes_valaszok** | **hibas_valaszok** | **pontErtek** | **nehezseg** | **kep** |
+| Válaszd ki... | egyszeres | VI. 22. | III. 21.;... | 2 | könnyű | jupiter.jpg |
 
 **1. sor (Ponthatárok):**
 - **B1**: Bronz szint minimális pontja (alapértelmezett: 30)
@@ -51,6 +57,7 @@ Oszlopnevek
 | **hibas_valaszok** | Hibás válaszok, pontosvesszővel elválasztva | "Newton;Kepler" |
 | **pontErtek** | Hány pontot ér a kérdés (szám!) | 8 |
 | **nehezseg** | "könnyű", "közepes" vagy "nehéz" | "közepes" |
+| **kep** | Kép fájlnév (opcionális) | "jupiter.jpg" |
 
 **Fontos:**
 - Az **első sor** mindig a **Ponthatárok** (3 szám: bronz, ezüst, arany)
@@ -62,6 +69,33 @@ Oszlopnevek
 - Típus értékek: `egyszeres`, `tobbszoros`, `szoveges` (ékezet nélkül!)
 - Nehézség értékek: `könnyű`, `közepes`, `nehéz`
 - A `pontErtek` legyen **szám formátum** (nem szöveg!)
+- A `kep` oszlop **opcionális** - ha nincs kép, hagyd üresen
+
+### 2a. Képek használata (opcionális)
+
+**Mappa struktúra:**
+```
+/kviz-projekt
+  ├── index.html
+  ├── script.js
+  ├── csillagaszat.xlsx
+  └── kepek/
+      ├── csillagaszat/
+      │   ├── jupiter.jpg
+      │   └── mars.png
+      ├── kozetbolygo/
+      ├── legkor/
+      ├── vizburok/
+      └── geoszferak/
+```
+
+**Támogatott formátumok:** JPG, PNG, GIF
+
+**Használat:**
+- Az Excel `kep` oszlopában add meg a fájlnevet: `jupiter.jpg`
+- A kép automatikusan a kérdés alatt jelenik meg
+- Reszponzív: telefonon és tableten is jól néz ki
+- Max méret: 400px magasság (desktop), automatikus szélesség
 
 ### 3. Futtatás
 
@@ -143,6 +177,10 @@ A kvíz **mindig megy 10 kérdésig** (vagy amíg vannak kérdések), nem áll m
 ✅ Szöveges válaszok
   - Több szinonima támogatása (pl. "66,5;66.5")
   - Autocomplete kikapcsolva (nem jegyez)
+✅ **Képes kérdések** (opcionális)
+  - JPG, PNG, GIF formátumok támogatva
+  - Reszponzív megjelenítés (mobil/tablet/desktop)
+  - Témakörönkénti képmappák
 ✅ Pontozás kérdésenként beállított pontértékekkel  
 ✅ **Színes tanúsítványok** szintenként (bronz/ezüst/arany)  
 ✅ Tanúsítvány csak egyszer letölthető  
